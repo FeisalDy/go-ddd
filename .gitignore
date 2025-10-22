@@ -1,0 +1,40 @@
+# Binaries for programs and plugins
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Output of 'go build'
+*.out
+
+# Vendor directory (if you're vendoring dependencies)
+vendor/
+
+# Other dependency management tools (if used)
+# Godep
+Godeps/
+_workspace/
+
+# Glide
+glide.lock
+glide.yaml
+
+# Dep
+Gopkg.lock
+Gopkg.toml
+
+# Editor/IDE specific files
+.idea/ # IntelliJ IDEA
+.vscode/ # VS Code
+.DS_Store # macOS
+Thumbs.db # Windows
+
+# Log files
+*.log
+
+# Temporary files
+*~
+#*#
+
+# Environment variables
+.env

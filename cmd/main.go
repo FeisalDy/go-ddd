@@ -20,15 +20,18 @@ func main() {
 
 	userRepo := postgres.NewUserRepository(postgres.DB)
 	roleRepo := postgres.NewRoleRepository(postgres.DB)
+	userRoleRepo := postgres.NewUserRoleRepository(postgres.DB)
 	userService := services.NewUserService(userRepo, hasher)
 	roleService := services.NewRoleService(roleRepo)
+	userRoleService := services.NewUserRoleService(userRepo, roleRepo, userRoleRepo)
 	authService := services.NewAuthService(userRepo, hasher, jwtService)
 
 	userHandler := rest.NewUserHandler(userService)
 	roleHandler := rest.NewRoleHandler(roleService)
+	userRoleHandler := rest.NewUserRoleHandler(userRoleService)
 	authHandler := rest.NewAuthHandler(authService)
 
-	r := rest.SetupRoutes(userHandler, authHandler, roleHandler, jwtService)
+	r := rest.SetupRoutes(userHandler, authHandler, roleHandler, userRoleHandler, jwtService)
 	serverAddr := ":" + cfg.App.Port
 
 	if err := r.Run(serverAddr); err != nil {

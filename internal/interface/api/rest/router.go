@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupRoutes(userHandler *UserHandler, authHandler *AuthHandler, roleHandler *RoleHandler, jwtService services.JWTService) *gin.Engine {
+func SetupRoutes(userHandler *UserHandler, authHandler *AuthHandler, roleHandler *RoleHandler, userRoleHandler *UserRoleHandler, jwtService services.JWTService) *gin.Engine {
 	r := gin.Default()
 
 	v1 := r.Group("/api/v1")
@@ -26,6 +26,9 @@ func SetupRoutes(userHandler *UserHandler, authHandler *AuthHandler, roleHandler
 		users := v1.Group("/users")
 		{
 			users.POST("/register", userHandler.Register)
+			users.GET("/:id/roles", userRoleHandler.ListUserRoles)
+			users.POST("/:id/roles", userRoleHandler.AssignRoles)
+			users.DELETE("/:id/roles/:roleId", userRoleHandler.RemoveRole)
 		}
 
 		roles := v1.Group("/roles")
@@ -34,7 +37,6 @@ func SetupRoutes(userHandler *UserHandler, authHandler *AuthHandler, roleHandler
 			roles.GET("/:id", roleHandler.GetById)
 		}
 
-		// Protected routes
 		protected := v1.Group("")
 		protected.Use(middleware.JWTAuth(jwtService))
 		{

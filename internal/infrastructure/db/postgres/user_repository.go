@@ -47,3 +47,11 @@ func (r *UserRepository) ExistsByEmail(email string) (bool, error) {
 	}
 	return count > 0, nil
 }
+
+func (r *UserRepository) FindByID(id uint) (*entities.User, error) {
+	var user entities.User
+	if err := r.db.First(&user, id).Error; err != nil {
+		return nil, fmt.Errorf("failed to find user by id: %w", err)
+	}
+	return &user, nil
+}

@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"github.com/FeisalDy/go-ddd/internal/application/interfaces"
+	"github.com/FeisalDy/go-ddd/internal/interface/api/rest/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,10 +22,10 @@ func NewRoleHandler(service interfaces.RoleService) *RoleHandler {
 func (h *RoleHandler) GetAll(c *gin.Context) {
 	roles, err := h.service.FindAll()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
-	c.JSON(http.StatusOK, roles)
+	response.Success(c, roles)
 
 }
 
@@ -33,7 +34,7 @@ func (h *RoleHandler) GetById(c *gin.Context) {
 
 	parsedUint64, err := strconv.ParseUint(id, 10, 64)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format: " + err.Error()})
+		response.Error(c, http.StatusInternalServerError, "Invalid ID format: "+err.Error())
 		return
 	}
 
@@ -41,9 +42,9 @@ func (h *RoleHandler) GetById(c *gin.Context) {
 	role, err := h.service.FindByID(roleID)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusNotFound, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, role)
+	response.Success(c, role)
 }

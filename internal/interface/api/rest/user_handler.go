@@ -6,6 +6,7 @@ import (
 	appDto "github.com/FeisalDy/go-ddd/internal/application/dto"
 	"github.com/FeisalDy/go-ddd/internal/application/interfaces"
 	"github.com/FeisalDy/go-ddd/internal/interface/api/rest/dto"
+	"github.com/FeisalDy/go-ddd/internal/interface/api/rest/response"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
@@ -23,12 +24,12 @@ func (h *UserHandler) Register(c *gin.Context) {
 	var request dto.RegisterUserRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err := h.validator.Struct(request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -40,9 +41,9 @@ func (h *UserHandler) Register(c *gin.Context) {
 
 	user, err := h.service.CreateUser(createUserRequest)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusCreated, user)
+	response.Success(c, user)
 }

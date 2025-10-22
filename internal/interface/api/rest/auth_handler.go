@@ -6,6 +6,7 @@ import (
 	appDto "github.com/FeisalDy/go-ddd/internal/application/dto"
 	"github.com/FeisalDy/go-ddd/internal/application/interfaces"
 	"github.com/FeisalDy/go-ddd/internal/interface/api/rest/dto"
+	"github.com/FeisalDy/go-ddd/internal/interface/api/rest/response"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
@@ -26,12 +27,12 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	var request dto.LoginRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	if err := h.validator.Struct(request); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -40,11 +41,11 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		Password: request.Password,
 	}
 
-	response, err := h.service.Login(loginRequest)
+	res, err := h.service.Login(loginRequest)
 	if err != nil {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		response.Error(c, http.StatusUnauthorized, err.Error())
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	response.Success(c, res)
 }
